@@ -15,8 +15,9 @@ export class BarcodeScannerComponent implements OnInit {
   cameraInfo: any = {};
   videoSelect: HTMLSelectElement | undefined;
   overlayManager: OverlayManager;
+  codetext:any;
 
-  constructor() { 
+  constructor() {
     this.overlayManager = new OverlayManager();
   }
 
@@ -47,7 +48,8 @@ export class BarcodeScannerComponent implements OnInit {
       await this.openCamera();
       this.scanner.onFrameRead = results => {
         this.overlayManager.clearOverlay();
-
+        console.log("results =",results);
+        this.codetext = results[0].barcodeText;
         let txts = [];
         let resultElement = document.getElementById('result');
         try {
@@ -58,6 +60,7 @@ export class BarcodeScannerComponent implements OnInit {
               localization = results[i].localizationResult;
               this.overlayManager.drawOverlay(localization, results[i].barcodeText);
             }
+            console.log('DZAFA',resultElement);
             if (resultElement) {
               resultElement.innerHTML = txts.join(', ');
             }
@@ -83,6 +86,8 @@ export class BarcodeScannerComponent implements OnInit {
     this.overlayManager.clearOverlay();
     if (this.videoSelect) {
       let deviceId = this.videoSelect.value;
+      console.log("deviceId =",deviceId);
+      console.log("scanner =",this.scanner);
       if (this.scanner) {
         await this.scanner.setCurrentCamera(this.cameraInfo[deviceId]);
       }
